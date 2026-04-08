@@ -22,7 +22,7 @@ root = xml_parser.parse(kiln_path)
 window: Gtk.Window
 
 def on_activate(app):
-    context = lib.Context(app)
+    context = lib.Context(app=app, base_path=os.path.dirname(kiln_path))
 
     global window
 
@@ -41,7 +41,7 @@ def on_file_changed(monitor, file, other_file, event_type):
     scripts.scripts.clear()
     scripts.widget_dictionary.clear()
 
-    context = lib.Context(app)
+    context = lib.Context(app, os.path.dirname(kiln_path))
     new_root = xml_parser.parse(kiln_path)
     window = widget_builder.build(new_root, context)
     scripts.run_scripts()

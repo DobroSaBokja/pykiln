@@ -6,9 +6,21 @@ from gi.repository import Gtk, Gdk
 import factories
 import lib
 import scripts
+import xml_parser
 
 def build(element: ET.Element, context: lib.Context):
     if element.tag == "Script":
+        return
+    if element.tag == "Import":
+        import os
+        path = os.path.expanduser(element.attrib["path"])
+        if os.path.isabs(path):
+            import_path = path
+        else:
+            import_path = os.path.join(context.base_path, path)
+        library_root = xml_parser.parse_library(import_path)
+        for child in library_root:
+            build(child, context)
         return
     if element.tag == "Property":
         _apply_property(element, context)
@@ -34,6 +46,8 @@ def build(element: ET.Element, context: lib.Context):
         temp = getattr(Gtk, element.tag, None)
         if temp == None:
             lib.throw_error("unknown widget " + element.tag)
+        if temp is Gtk.Widget:
+            lib.throw_error("<" + element.tag + "> resolves to abstract Gtk.Widget and cannot be instantiated")
         widget: Gtk.Widget = temp()
 
     for key, value in element.attrib.items():
@@ -55,9 +69,9 @@ def build(element: ET.Element, context: lib.Context):
         elif hasattr(context.parent, 'set_child'):
             context.parent.set_child(widget)
         else:
-            lib.throw_error(context.parent_tag, "cannot have children")
+            lib.throw_error(context.parent_tag + " cannot have children")
     
-    new_context = lib.Context(context.app, element.tag, widget)
+    new_context = lib.Context(context.app, context.base_path, element.tag, widget)
 
     for child in element:
         build(child, new_context)

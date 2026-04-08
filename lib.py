@@ -4,10 +4,12 @@ from gi.repository import Gtk, GObject, Gdk
 from dataclasses import dataclass
 
 import typing
+from pathlib import Path
 
 @dataclass
 class Context:
     app: Gtk.Application
+    base_path: Path
     parent_tag: str = ""
     parent: typing.Optional[Gtk.Widget] = None
 
