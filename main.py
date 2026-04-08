@@ -8,12 +8,16 @@ gi.require_version('Gtk4LayerShell', '1.0')
 from gi.repository import Gtk
 from gi.repository import Gtk4LayerShell as LayerShell
 
+import sys
+
 import xml_parser
 import widget_builder
 import lib
 import scripts
 
-root = xml_parser.parse("test.kiln")
+import os
+kiln_path = os.path.abspath(os.path.expanduser(sys.argv[1]))
+root = xml_parser.parse(kiln_path)
 
 def on_activate(app):
     context = lib.Context(app)
