@@ -1,12 +1,5 @@
-import gi
-from gi.repository import Gtk, Gdk
+from gi.repository import Gtk
 from gi.repository import Gtk4LayerShell as LayerShell
-
-import lib
-
-def _parse_bool(value):
-    return value.lower() in ("true", "1", "yes")
-
 
 def _set_all_margins(widget, margin):
     widget.set_margin_start(margin)
@@ -17,14 +10,6 @@ def _set_all_margins(widget, margin):
 
 def _construct_bar(context):
     window = Gtk.Window(application=context.app)
-
-    provider = Gtk.CssProvider()
-    provider.load_from_string("* { margin: 0; padding: 0; }")
-    Gtk.StyleContext.add_provider_for_display(
-        Gdk.Display.get_default(),
-        provider,
-        Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
-    )
 
     window.set_decorated(False)
 
@@ -39,6 +24,9 @@ def _toggle_exclusive_zone(w, v):
     else:
         LayerShell.set_exclusive_zone(w, 0)
 
+def _apply_css_class(w: Gtk.Widget, v: str):
+    w.add_css_class(v)
+
 widget_mapping = {
     "Window": lambda context: Gtk.Window(application=context.app),
     "ApplicationWindow": lambda context: Gtk.ApplicationWindow(application=context.app),
@@ -46,6 +34,10 @@ widget_mapping = {
 }
 
 attribute_handlers = {
+    "common": {
+        "margin": _set_all_margins,
+        "class": _apply_css_class,
+    },
     "Bar": {
         "exclusive-zone": _toggle_exclusive_zone,
         "anchored-top": lambda w, v: LayerShell.set_anchor(w, LayerShell.Edge.TOP, v.lower() in ("true", "1", "yes")),

@@ -1,14 +1,7 @@
-<Bar anchored-top="True" anchored-left="True" anchored-right="True">
-    <Property>margin-top=5</Property>
-    <Property>margin-left=5</Property>
-    <Property>margin-right=5</Property>
-    <Button label="test" id="button"  ></Button>
-    <Script>
-        button = get("button")
-
-        def on_click(_):
-            print("CLICKED!")
-
-        button.connect("clicked", on_click)
-    </Script>
+<Bar anchored-top="True" anchored-left="True" anchored-right="True" id="bar">
+    <Style>
+        #bar.background {
+            background-color: rgb(255, 0, 0)
+        }
+    </Style>
 </Bar>
