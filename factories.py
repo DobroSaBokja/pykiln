@@ -13,6 +13,24 @@ def _apply_css_class(w: Gtk.Widget, v: str):
 class Bar(Gtk.Window):
     __gtype_name__ = "Bar"
 
+    @GObject.Property(type=LayerShell.Layer, default=LayerShell.Layer.TOP)
+    def layer(self):
+        return self._layer
+    
+    @layer.setter
+    def layer(self, value: LayerShell.Layer):
+        self._layer = value
+        LayerShell.set_layer(self, value)
+
+    @GObject.Property(type=LayerShell.Layer, default=False)
+    def layer(self):
+        return self._layer
+    
+    @layer.setter
+    def layer(self, value: LayerShell.Layer):
+        self._layer = value
+        LayerShell.set_layer(self, value)
+
     @GObject.Property(type=bool, default=False)
     def anchored_top(self):
         return self._anchored_top
@@ -103,6 +121,7 @@ class Bar(Gtk.Window):
         self._margin_bottom = 0
         self._margin_left = 0
         self._margin_right = 0
+        self._layer = LayerShell.Layer.TOP
         self.set_decorated(False)
 
         LayerShell.init_for_window(self)
@@ -253,10 +272,26 @@ widget_mapping = {
     "Anchor": lambda _: Anchor(),
 }
 
+_LAYER_MAP = {
+    "background": LayerShell.Layer.BACKGROUND,
+    "bottom":     LayerShell.Layer.BOTTOM,
+    "top":        LayerShell.Layer.TOP,
+    "overlay":    LayerShell.Layer.OVERLAY,
+}
+
+def _set_bar_layer(widget, value: str):
+    if value not in _LAYER_MAP:
+        import lib
+        lib.throw_error("unknown layer value '" + value + "'; expected one of: " + ", ".join(_LAYER_MAP))
+    widget.set_property("layer", _LAYER_MAP[value])
+
 attribute_handlers = {
     "common": {
         "margin": _set_all_margins,
         "class": _apply_css_class,
+    },
+    "Bar": {
+        "layer": _set_bar_layer,
     },
 }
 
