@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:docs.gtk.org)",
+      "Bash(curl -s https://docs.gtk.org/gtk4/class.Grid.html)",
+      "Bash(curl -s https://docs.gtk.org/gtk4/class.Label.html)",
+      "Bash(curl -s https://docs.gtk.org/gtk4/class.Button.html)",
+      "Bash(curl -s https://docs.gtk.org/gtk4/class.Entry.html)",
+      "Bash(curl -s https://docs.gtk.org/gtk4/class.Image.html)",
+      "Bash(curl -s https://docs.gtk.org/gtk4/class.Overlay.html)"
+    ]
+  }
+}

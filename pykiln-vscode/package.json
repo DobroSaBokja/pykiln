@@ -1,0 +1,37 @@
+{
+  "name": "pykiln",
+  "displayName": "PyKiln",
+  "description": "Syntax highlighting for .kiln files — XML with embedded Python in <Script> tags",
+  "version": "0.1.0",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "kiln",
+        "aliases": [
+          "Kiln",
+          "kiln"
+        ],
+        "extensions": [
+          ".kiln"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "kiln",
+        "scopeName": "text.xml.kiln",
+        "path": "./syntaxes/kiln.tmLanguage.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.python": "python"
+        }
+      }
+    ]
+  }
+}
