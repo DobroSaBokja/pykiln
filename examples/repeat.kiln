@@ -1,0 +1,30 @@
+<Window default-width="300" default-height="300">
+    <Anchor anchor="center">
+        <Rectangle width-request="50" height-request="50" id="rect" color="red"></Rectangle>
+    </Anchor>
+    <Script>
+        rect = get("rect")
+
+        colors = [
+            "red",
+            "yellow",
+            "green",
+            "blue"
+        ]
+
+        index = 0
+        def next_color():
+            global index
+            global rect
+
+            if index == 3:
+                index = 0
+            else:
+                index += 1
+            color = colors[index]
+
+            rect.set_property("color", color)
+
+        bind("repeat", next_color, 1) # will be executed every 1s
+    </Script>
+</Window>
