@@ -1,0 +1,11 @@
+<Library>
+    <Anchor anchor="center-right">
+        <Rectangle id="red-rect" width-request="50" height-request="50" color="green"></Rectangle>
+    </Anchor>
+    <!-- Libraries can have scripts too -->
+    <!-- and have full access to where they are imported from -->
+    <Script>
+        blue_rect = get("blue-rect")
+        blue_rect.set_property("color", "blue")
+    </Script>
+</Library>

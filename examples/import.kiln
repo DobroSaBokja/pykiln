@@ -1,0 +1,11 @@
+<Window default-width="500" default-height="500">
+    <Import path="library.kiln"></Import>
+    <Anchor anchor="center-left">
+        <Rectangle id="blue-rect" width-request="50" height-request="50" color="yellow"></Rectangle>
+    </Anchor>
+    <!-- Scripts have access to element in imports -->
+    <Script>
+        red_rect = get("red-rect")
+        red_rect.set_property("color", "red")
+    </Script>
+</Window>
