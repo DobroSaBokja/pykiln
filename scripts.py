@@ -37,6 +37,8 @@ def get(id):
     
     return widget_dictionary[id]
 
+binded = []
+
 def bind(event, func, *args):
     match event:
         case "repeat":
@@ -46,7 +48,11 @@ def bind(event, func, *args):
                     return GLib.SOURCE_CONTINUE
                 return GLib.SOURCE_REMOVE
             
-            GLib.timeout_add_seconds(time, tick)
+            binded.append(GLib.timeout_add_seconds(time, tick))
+
+def killall():
+    for source in binded:
+        GLib.source_remove(source)
 
 
 def run_scripts():
