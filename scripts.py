@@ -53,9 +53,17 @@ def killall():
     for source in binded:
         GLib.source_remove(source)
 
-def shell():
+def shell(cmd):
     import subprocess
     return subprocess.check_output(cmd, shell=True, text=True).strip()
+
+def shell_async(cmd, callback=None):
+    import subprocess, threading
+    def run():
+        result = subprocess.check_output(cmd, shell=True, text=True).strip()
+        if callback:
+            GLib.idle_add(lambda: callback(result))
+    threading.Thread(target=run, daemon=True).start()
 
 def run_scripts():
     globals: dict = {
