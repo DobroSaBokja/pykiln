@@ -1,0 +1,15 @@
+<Bar>
+    <Property>anchored-top=True</Property>
+    <Style>
+        button {
+            background-color: rgb(42, 143, 106);
+            background-image: none;
+        }
+    </Style>
+    <Script>
+        my_button = get("my-button")
+
+        my_button.connect("clicked", lambda _: print("CLICKED"))
+    </Script>
+    <Button id="my-button" label=":3"></Button>
+</Bar>

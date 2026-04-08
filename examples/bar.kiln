@@ -1,0 +1,3 @@
+<Bar anchored-top="True" anchored-left="True" anchored-right="True">
+    <Label label="test bar"></Label>
+</Bar>
