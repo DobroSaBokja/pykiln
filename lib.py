@@ -1,6 +1,6 @@
 import gi
 
-from gi.repository import Gtk, GObject
+from gi.repository import Gtk, GObject, Gdk
 from dataclasses import dataclass
 
 import typing
@@ -30,11 +30,19 @@ def convert_value(widget: Gtk.Widget, prop_name, string_value):
         return float(string_value)
     elif vtype == GObject.TYPE_BOOLEAN:
         return string_value.lower() in ("true", "1", "yes")
+    elif vtype.pytype is Gdk.RGBA:
+        color = Gdk.RGBA()
+        color.parse(string_value)
+        return color
     elif vtype.is_a(GObject.GEnum):
         enum_class = vtype.pytype
+        if enum_class is None:
+            enum_class = getattr(Gtk, vtype.name.removeprefix("Gtk"), None)
+        if enum_class is None:
+            throw_error("cannot resolve enum type for " + prop_name)
         for val in enum_class.__enum_values__.values():
             if val.value_nick == string_value:
                 return val
-        throw_error("no enum called " + prop_name)
+        throw_error("no enum value '" + string_value + "' for " + prop_name)
     else:
         return string_value

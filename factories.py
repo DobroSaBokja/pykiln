@@ -1,4 +1,4 @@
-from gi.repository import Gtk
+from gi.repository import Gtk, GObject, Gdk, Graphene, Gsk
 from gi.repository import Gtk4LayerShell as LayerShell
 
 def _set_all_margins(widget, margin):
@@ -7,48 +7,165 @@ def _set_all_margins(widget, margin):
     widget.set_margin_top(margin)
     widget.set_margin_bottom(margin)
 
-
-def _construct_bar(context):
-    window = Gtk.Window(application=context.app)
-
-    window.set_decorated(False)
-
-    LayerShell.init_for_window(window)
-    LayerShell.set_layer(window, LayerShell.Layer.TOP)
-
-    return window
-
-def _toggle_exclusive_zone(w, v):
-    if v.lower() in ("true", "1", "yes"):
-        LayerShell.auto_exclusive_zone_enable(w)
-    else:
-        LayerShell.set_exclusive_zone(w, 0)
-
 def _apply_css_class(w: Gtk.Widget, v: str):
     w.add_css_class(v)
+
+class Bar(Gtk.Window):
+    __gtype_name__ = "Bar"
+
+    @GObject.Property(type=bool, default=False)
+    def anchored_top(self):
+        return self._anchored_top
+    
+    @anchored_top.setter
+    def anchored_top(self, value: bool):
+        self._anchored_top = value
+        LayerShell.set_anchor(self, LayerShell.Edge.TOP, value)
+
+    @GObject.Property(type=bool, default=False)
+    def anchored_bottom(self):
+        return self._anchored_bottom
+    
+    @anchored_bottom.setter
+    def anchored_bottom(self, value: bool):
+        self._anchored_bottom = value
+        LayerShell.set_anchor(self, LayerShell.Edge.BOTTOM, value)
+
+    @GObject.Property(type=bool, default=False)
+    def anchored_left(self):
+        return self._anchored_left
+    
+    @anchored_left.setter
+    def anchored_left(self, value: bool):
+        self._anchored_left = value
+        LayerShell.set_anchor(self, LayerShell.Edge.LEFT, value)
+
+    @GObject.Property(type=bool, default=False)
+    def anchored_right(self):
+        return self._anchored_top
+    
+    @anchored_right.setter
+    def anchored_right(self, value: bool):
+        self._anchored_right = value
+        LayerShell.set_anchor(self, LayerShell.Edge.RIGHT, value)
+
+    @GObject.Property(type=bool, default=False)
+    def exclusive_zone(self):
+        return self._exclusive_zone
+    
+    @exclusive_zone.setter
+    def exclusive_zone(self, value: bool):
+        self._exclusive_zone = value
+        if value:
+            LayerShell.auto_exclusive_zone_enable(self)
+        else:
+            LayerShell.set_exclusive_zone(self, 0)
+
+    @GObject.Property(type=int, default=0)
+    def margin_top(self):
+        return self._margin_top
+
+    @margin_top.setter
+    def margin_top(self, value: int):
+        self._margin_top = value
+        LayerShell.set_margin(self, LayerShell.Edge.TOP, value)
+
+    @GObject.Property(type=int, default=0)
+    def margin_bottom(self):
+        return self._margin_bottom
+
+    @margin_bottom.setter
+    def margin_bottom(self, value: int):
+        self._margin_bottom = value
+        LayerShell.set_margin(self, LayerShell.Edge.BOTTOM, value)
+
+    @GObject.Property(type=int, default=0)
+    def margin_left(self):
+        return self._margin_left
+
+    @margin_left.setter
+    def margin_left(self, value: int):
+        self._margin_left = value
+        LayerShell.set_margin(self, LayerShell.Edge.LEFT, value)
+
+    @GObject.Property(type=int, default=0)
+    def margin_right(self):
+        return self._margin_right
+
+    @margin_right.setter
+    def margin_right(self, value: int):
+        self._margin_right = value
+        LayerShell.set_margin(self, LayerShell.Edge.RIGHT, value)
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self._margin_top = 0
+        self._margin_bottom = 0
+        self._margin_left = 0
+        self._margin_right = 0
+        self.set_decorated(False)
+
+        LayerShell.init_for_window(self)
+        LayerShell.set_layer(self, LayerShell.Layer.TOP)
+
+class Rectangle(Gtk.Widget):
+    __gtype_name__ = "Rectangle"
+
+    color = GObject.Property(type=Gdk.RGBA)
+
+    def do_measure(self, orientation, _for_size):
+        if orientation == Gtk.Orientation.HORIZONTAL:
+            size = self.get_property("width-request")
+        else:
+            size = self.get_property("height-request")
+        size = max(size, 0)
+        return (size, size, -1, -1)
+
+    def do_snapshot(self, snapshot: Gtk.Snapshot):
+        bounds = Graphene.Rect().init(0, 0, self.get_width(), self.get_height())
+        snapshot.append_color(self.props.color, bounds)
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.set_halign(Gtk.Align.START)
+        self.set_valign(Gtk.Align.START)
+
+class Circle(Gtk.Widget):
+    __gtype_name__ = "Circle"
+
+    color = GObject.property(type=Gdk.RGBA)
+    radius = GObject.property(type=float)
+
+    def do_measure(self, orientation, _for_size):
+        size = int(self.props.radius * 2)
+        return (size, size, -1, -1)
+
+    def do_snapshot(self, snapshot):
+        r = self.props.radius
+        bounds = Graphene.Rect().init(0, 0, r * 2, r * 2)
+        rounded = Gsk.RoundedRect()
+        rounded.init_from_rect(bounds, r)
+        snapshot.push_rounded_clip(rounded)
+        snapshot.append_color(self.props.color, bounds)
+        snapshot.pop()
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.set_halign(Gtk.Align.START)
+        self.set_valign(Gtk.Align.START)
 
 widget_mapping = {
     "Window": lambda context: Gtk.Window(application=context.app),
     "ApplicationWindow": lambda context: Gtk.ApplicationWindow(application=context.app),
-    "Bar": _construct_bar
+    "Bar": lambda context: Bar(application=context.app),
+    "Rectangle": lambda _: Rectangle(),
+    "Circle": lambda _: Circle()
 }
 
 attribute_handlers = {
     "common": {
         "margin": _set_all_margins,
         "class": _apply_css_class,
-    },
-    "Bar": {
-        "exclusive-zone": _toggle_exclusive_zone,
-        "anchored-top": lambda w, v: LayerShell.set_anchor(w, LayerShell.Edge.TOP, v.lower() in ("true", "1", "yes")),
-        "anchored-bottom": lambda w, v: LayerShell.set_anchor(w, LayerShell.Edge.BOTTOM, v.lower() in ("true", "1", "yes")),
-        "anchored-left": lambda w, v: LayerShell.set_anchor(w, LayerShell.Edge.LEFT, v.lower() in ("true", "1", "yes")),
-        "anchored-right": lambda w, v: LayerShell.set_anchor(w, LayerShell.Edge.RIGHT, v.lower() in ("true", "1", "yes")),
-
-        "margin-top": lambda w, v: LayerShell.set_margin(w, LayerShell.Edge.TOP, int(v)),
-        "margin-bottom": lambda w, v: LayerShell.set_margin(w, LayerShell.Edge.BOTTOM, int(v)),
-        "margin-left": lambda w, v: LayerShell.set_margin(w, LayerShell.Edge.LEFT, int(v)),
-        "margin-right": lambda w, v: LayerShell.set_margin(w, LayerShell.Edge.RIGHT, int(v)),
     },
 }
 

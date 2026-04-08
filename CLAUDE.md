@@ -67,3 +67,4 @@ Currently hardcoded to load `test.kiln`. Requires `libgtk4-layer-shell.so` insta
 - To add a new widget type that needs special construction: add an entry to `widget_mapping` in `factories.py`. Otherwise, any `Gtk.*` class works automatically as an XML tag.
 - To add a custom attribute handler: add an entry under the tag name (or `"common"`) in `attribute_handlers` in `factories.py`.
 - `convert_value()` in `widget_builder.py` handles automatic coercion of XML string values to the correct GObject property type (int, float, bool, enum).
+- Never edit the project files unless explicitly prompted

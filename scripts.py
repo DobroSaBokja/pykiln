@@ -14,7 +14,7 @@ class Widget:
         if id in widget_dictionary:
             lib.throw_error("two widgets cant have the same id")
         else:
-            widget_dictionary[id] = widget
+            widget_dictionary[id] = self
     
     def set_property(self, key: str, value):
         if key in factories.attribute_handlers and key in factories.attribute_handlers[key]:
@@ -22,7 +22,7 @@ class Widget:
         elif key in factories.attribute_handlers["common"]:
             factories.attribute_handlers["common"][key](self._widget, value)
         else:
-            widget.set_property(key, lib.convert_value(self._widget, key, value))
+            self._widget.set_property(key, lib.convert_value(self._widget, key, value))
 
     def connect(self, signal: str, function):
         self._widget.connect(signal, function)

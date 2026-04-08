@@ -1,6 +1,7 @@
 {
   "permissions": {
     "allow": [
+      "WebSearch",
       "WebFetch(domain:docs.gtk.org)",
       "Bash(curl -s https://docs.gtk.org/gtk4/class.Grid.html)",
       "Bash(curl -s https://docs.gtk.org/gtk4/class.Label.html)",

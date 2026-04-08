@@ -1,7 +1,15 @@
-<Bar anchored-top="True" anchored-left="True" anchored-right="True" id="bar">
-    <Style>
-        #bar.background {
-            background-color: rgb(255, 0, 0)
-        }
-    </Style>
-</Bar>
+<Window default-width="500" default-height="500">
+    <Box hexpand="true" vexpand="true" halign="fill" valign="fill">
+        <Circle radius="50" hexpand="true" id="rect">
+            <Property>halign=center</Property>
+            <Property>valign=center</Property>
+        </Circle>
+    </Box>
+    <Script>
+        rect = get("rect")
+
+        print(rect)
+
+        rect.set_property("color", "yellow")
+    </Script>
+</Window>
