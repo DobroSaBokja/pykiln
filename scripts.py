@@ -44,9 +44,8 @@ def bind(event, func, *args):
         case "repeat":
             time = args[0]
             def tick():
-                if func():
-                    return GLib.SOURCE_CONTINUE
-                return GLib.SOURCE_REMOVE
+                func()
+                return GLib.SOURCE_CONTINUE
             
             binded.append(GLib.timeout_add_seconds(time, tick))
 
@@ -54,6 +53,9 @@ def killall():
     for source in binded:
         GLib.source_remove(source)
 
+def shell():
+    import subprocess
+    return subprocess.check_output(cmd, shell=True, text=True).strip()
 
 def run_scripts():
     globals: dict = {

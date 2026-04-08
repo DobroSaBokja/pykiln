@@ -111,7 +111,14 @@ class Bar(Gtk.Window):
 class Rectangle(Gtk.Widget):
     __gtype_name__ = "Rectangle"
 
-    color = GObject.Property(type=Gdk.RGBA)
+    @GObject.Property(type=Gdk.RGBA)
+    def color(self):
+        return self._color
+
+    @color.setter
+    def color(self, value):
+        self._color = value
+        self.queue_draw()
 
     def do_measure(self, orientation, _for_size):
         if orientation == Gtk.Orientation.HORIZONTAL:
@@ -127,6 +134,7 @@ class Rectangle(Gtk.Widget):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self._color = Gdk.RGBA()
         self.set_halign(Gtk.Align.START)
         self.set_valign(Gtk.Align.START)
 

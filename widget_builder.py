@@ -9,9 +9,7 @@ import scripts
 
 def build(element: ET.Element, context: lib.Context):
     if element.tag == "Script":
-        scripts.scripts.append(element.text)
         return
-    
     if element.tag == "Property":
         _apply_property(element, context)
         return
