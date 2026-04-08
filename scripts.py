@@ -1,7 +1,7 @@
 import lib
 import textwrap
 
-from gi.repository import Gtk
+from gi.repository import Gtk, GLib
 
 import lib
 import factories
@@ -37,9 +37,22 @@ def get(id):
     
     return widget_dictionary[id]
 
+def bind(event, func, *args):
+    match event:
+        case "repeat":
+            time = args[0]
+            def tick():
+                if func():
+                    return GLib.SOURCE_CONTINUE
+                return GLib.SOURCE_REMOVE
+            
+            GLib.timeout_add_seconds(time, tick)
+
+
 def run_scripts():
     globals: dict = {
-        "get": get
+        "get": get,
+        "bind": bind,
     }
 
     for script in scripts:
