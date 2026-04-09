@@ -3,5 +3,8 @@
 PyKiln allows you to write quick-and-dirty XML, with `<Script>` and `<Style>` tags similar to HTML, with Python and CSS respectively.
 `<Script>` tags can execute any Python code, meaning Kiln has integration with anything that has Python integration. It
 also comes with a thin wrapper to simplify interacting with Gtk Widgets.
+## Documentation
+Full documentation is available at: https://pykiln.readthedocs.io
+
 ## Examples
 Examples are in the `examples` directory in the repository.
