@@ -1,0 +1,27 @@
+<Window>
+    <Blueprint id="rect-blueprint">
+        <Anchor anchor="{anchor}">
+            <Rectangle width-request="100" height-request="100" color="{color}"></Rectangle>
+        </Anchor>
+    </Blueprint>
+    <Script>
+        blueprint = get_blueprint("rect-blueprint")
+
+        ANCHORS = [
+            "top-left",
+            "top-right",
+            "bottom-left",
+            "bottom-right"
+        ]
+
+        COLORS = [
+            "red",
+            "yellow",
+            "green",
+            "blue"
+        ]
+
+        for i in range(4):
+            blueprint.create(anchor=ANCHORS[i], color=COLORS[i])
+    </Script>
+</Window>
