@@ -5,3 +5,5 @@ __pycache__/
 pykiln-vscode/
 
 test.kiln
+
+docs/_build/
