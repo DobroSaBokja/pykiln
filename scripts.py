@@ -1,10 +1,14 @@
 import lib
+import re
 import textwrap
+
+import xml.etree.ElementTree as ET
 
 from gi.repository import Gtk, GLib
 
 import lib
 import factories
+import widget_builder
 
 class Widget:
     def __init__(self, id: str, widget: Gtk.Widget):
@@ -30,6 +34,8 @@ class Widget:
 scripts: list = []
 
 widget_dictionary: dict = {}
+
+blueprints: dict = {}
 
 def get(id):
     if id not in widget_dictionary:
@@ -65,10 +71,17 @@ def shell_async(cmd, callback=None):
             GLib.idle_add(lambda: callback(result))
     threading.Thread(target=run, daemon=True).start()
 
+def get_blueprint(id: str):
+    if id not in blueprints:
+        lib.throw_error("No blueprint with id " + id)
+
+    return blueprints[id]
+
 def run_scripts():
     globals: dict = {
         "get": get,
         "bind": bind,
+        "get_blueprint": get_blueprint,
     }
 
     for script in scripts:

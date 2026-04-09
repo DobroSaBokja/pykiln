@@ -5,6 +5,10 @@ from dataclasses import dataclass
 
 import typing
 from pathlib import Path
+import copy
+import re
+
+import xml.etree.ElementTree as ET
 
 @dataclass
 class Context:
@@ -12,6 +16,42 @@ class Context:
     base_path: Path
     parent_tag: str = ""
     parent: typing.Optional[Gtk.Widget] = None
+
+class Blueprint:
+    element: ET.Element
+    context: Context
+    id: str
+
+    def __init__(self, element, context, id):
+        self.element = element
+        self.context = context
+        self.id = id
+
+    def create(self, parent_id=None, **kwargs):
+        import scripts
+        import widget_builder
+
+        context = copy.copy(self.context)
+
+        if parent_id is not None:
+            if parent_id not in scripts.widget_dictionary:
+                throw_error("No widget with id " + parent_id)
+            context.parent = scripts.widget_dictionary[parent_id]._widget
+
+        element = copy.deepcopy(self.element)
+
+        def replace_templates(el: ET.Element):
+            for attrib in el.attrib:
+                if m := re.search(r'\{([^}]+)\}', el.attrib[attrib]):
+                    key = m.group(1)
+                    if key in kwargs:
+                        el.attrib[attrib] = kwargs[key]
+            for child in el:
+                replace_templates(child)
+
+        replace_templates(element)
+        for child in element:
+            widget_builder.build(child, context)
 
 def throw_error(message):
     print("ERROR:", message)

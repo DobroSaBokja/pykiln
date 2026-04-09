@@ -25,7 +25,13 @@ def build(element: ET.Element, context: lib.Context):
     if element.tag == "Property":
         _apply_property(element, context)
         return
-    
+    if element.tag == "Blueprint":
+        if "id" not in element.attrib.keys():
+            lib.throw_error("Blueprints must have an ID")
+
+        bp = lib.Blueprint(element, context, element.attrib["id"])
+        scripts.blueprints[bp.id] = bp
+        return
     if element.tag == "Style":
         css_provider = Gtk.CssProvider()
         try:
