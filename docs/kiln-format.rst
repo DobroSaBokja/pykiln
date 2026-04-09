@@ -20,7 +20,7 @@ Attribute values are strings in XML and are automatically coerced to the
 correct GObject property type (``int``, ``float``, ``bool``, ``Gdk.RGBA``,
 enum). Boolean values accept ``true``, ``1``, or ``yes``.
 
-Two common attributes apply to all widgets:
+Three common attributes apply to all widgets:
 
 ``margin``
    Sets all four margins to the same value (integer pixels).
@@ -37,14 +37,14 @@ Special tags
 
 ``<Script>``
    Embedded Python block. Executed after the full widget tree is built.
-   Has access to the :doc:`script-api`. No CDATA needed — plain text works.
+   Has access to the :doc:`script-api`.
 
 ``<Style>``
    Inline CSS applied globally to the default display via ``Gtk.CssProvider``.
 
 ``<Property>``
    Sets a property on the **parent** widget using ``key=value`` syntax.
-   Useful for properties that cannot be expressed as XML attributes.
+   Useful for code readabilty.
 
    .. code-block:: xml
 
@@ -66,13 +66,3 @@ Example with multiple features
 
 .. literalinclude:: ../examples/features.kiln
    :language: xml
-
-Build order
------------
-
-#. ``xml_parser.parse()`` extracts all ``<Script>`` blocks and strips them from
-   the tree.
-#. ``widget_builder.build()`` walks the tree depth-first, creating widgets and
-   resolving attributes.
-#. After the full tree is built, ``scripts.run_scripts()`` executes all
-   collected scripts in order.

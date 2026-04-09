@@ -35,21 +35,27 @@ Widget access
 Events
 ------
 
-.. function:: bind(event, func, *args)
+.. function:: bind(event, func, *args) -> Event
 
    Registers a recurring callback. Currently supports one event type:
 
    ``"repeat"``
       Calls ``func()`` on a ``GLib`` timer. The third argument is the interval
-      in seconds (``float``).
+      in seconds (``float``). Returns an :class:`Event` that can be used to
+      cancel the timer.
 
       .. code-block:: python
 
-         bind("repeat", my_func, 0.5)  # every 500 ms
+         e = bind("repeat", my_func, 0.5)  # every 500 ms
+         e.kill()  # cancel
 
-.. function:: killall()
+.. class:: Event
 
-   Cancels all active ``bind`` sources.
+   Returned by :func:`bind`. Represents an active timer.
+
+   .. method:: kill()
+
+      Cancels the timer and removes it from the active event list.
 
 Example using ``bind("repeat", ...)``:
 
