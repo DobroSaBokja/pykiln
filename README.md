@@ -9,7 +9,7 @@ also comes with a thin wrapper to simplify interacting with Gtk Widgets.
 
 Run the install script as root:
 ```sh
-sudo bash <(curl -s https://raw.githubusercontent.com/DobroSaBokja/pykiln/prod/install.sh)
+curl -s https://raw.githubusercontent.com/DobroSaBokja/pykiln/prod/install.sh | sudo bash
 ```
 Then run a `.kiln` file with:
 
