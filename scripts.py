@@ -31,6 +31,14 @@ class Widget:
     def connect(self, signal: str, function):
         self._widget.connect(signal, function)
 
+class Event:
+    def __init__(self, id: int):
+        self.id = id
+    
+    def kill(self):
+        GLib.source_remove(self.id)
+        binded.remove(self.id)
+
 scripts: list = []
 
 widget_dictionary: dict = {}
@@ -53,7 +61,9 @@ def bind(event, func, *args):
                 func()
                 return GLib.SOURCE_CONTINUE
             
-            binded.append(GLib.timeout_add_seconds(time, tick))
+            source_id = GLib.timeout_add_seconds(time, tick)
+            binded.append(source_id)
+            return Event(source_id)
 
 def killall():
     for source in binded:
