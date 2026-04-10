@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified">
+
+  <!-- ============================================================
+       Common attribute group shared by all widget elements
+       ============================================================ -->
+  <xs:attributeGroup name="commonAttrs">
+    <xs:attribute name="id"     type="xs:string" use="optional"/>
+    <xs:attribute name="class"  type="xs:string" use="optional"/>
+    <xs:attribute name="margin" type="xs:integer" use="optional"/>
+    <!-- Any additional GTK property can appear as an attribute -->
+    <xs:anyAttribute processContents="lax"/>
+  </xs:attributeGroup>
+
+  <!-- ============================================================
+       Mixed content model for widget children.
+       A widget may contain other known special elements, custom
+       widgets, or any unknown GTK widget tag.
+       ============================================================ -->
+  <xs:group name="widgetContent">
+    <xs:choice>
+      <xs:element ref="Script"/>
+      <xs:element ref="Style"/>
+      <xs:element ref="Property"/>
+      <xs:element ref="Import"/>
+      <xs:element ref="Blueprint"/>
+      <xs:element ref="Rectangle"/>
+      <xs:element ref="Circle"/>
+      <xs:element ref="Anchor"/>
+      <xs:element ref="Window"/>
+      <xs:element ref="ApplicationWindow"/>
+      <xs:element ref="Bar"/>
+      <!-- Fallback: any GTK widget tag not listed above -->
+      <xs:any namespace="##local" processContents="lax"/>
+    </xs:choice>
+  </xs:group>
+
+  <!-- ============================================================
+       Special elements
+       ============================================================ -->
+
+  <!-- Script: embedded Python block; plain text content -->
+  <xs:element name="Script">
+    <xs:complexType mixed="true"/>
+  </xs:element>
+
+  <!-- Style: inline CSS applied globally -->
+  <xs:element name="Style">
+    <xs:complexType mixed="true"/>
+  </xs:element>
+
+  <!-- Property: sets a property on the parent widget; text = "key=value" -->
+  <xs:element name="Property">
+    <xs:complexType mixed="true"/>
+  </xs:element>
+
+  <!-- Import: loads an external .kiln library file -->
+  <xs:element name="Import">
+    <xs:complexType>
+      <xs:attribute name="path" type="xs:string" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- Blueprint: reusable widget template; not rendered immediately -->
+  <xs:element name="Blueprint">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:group ref="widgetContent" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute name="id" type="xs:string" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- ============================================================
+       Custom widgets
+       ============================================================ -->
+
+  <!-- Rectangle: filled rectangle widget -->
+  <xs:element name="Rectangle">
+    <xs:complexType>
+      <xs:attribute name="color"          type="xs:string"  use="optional"/>
+      <xs:attribute name="width-request"  type="xs:integer" use="optional"/>
+      <xs:attribute name="height-request" type="xs:integer" use="optional"/>
+      <xs:attributeGroup ref="commonAttrs"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- Circle: filled circle widget -->
+  <xs:element name="Circle">
+    <xs:complexType>
+      <xs:attribute name="color"  type="xs:string" use="optional"/>
+      <xs:attribute name="radius" type="xs:float"  use="optional"/>
+      <xs:attributeGroup ref="commonAttrs"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- Anchor: positions a single child at one of nine anchor points -->
+  <xs:element name="Anchor">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:group ref="widgetContent" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute name="anchor" use="optional">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="top-left"/>
+            <xs:enumeration value="top-center"/>
+            <xs:enumeration value="top-right"/>
+            <xs:enumeration value="center-left"/>
+            <xs:enumeration value="center"/>
+            <xs:enumeration value="center-right"/>
+            <xs:enumeration value="bottom-left"/>
+            <xs:enumeration value="bottom-center"/>
+            <xs:enumeration value="bottom-right"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attributeGroup ref="commonAttrs"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- ============================================================
+       Window types
+       ============================================================ -->
+
+  <!-- Window: standard GTK4 window; root element for app .kiln files -->
+  <xs:element name="Window">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:group ref="widgetContent" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="commonAttrs"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- ApplicationWindow: GTK4 ApplicationWindow -->
+  <xs:element name="ApplicationWindow">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:group ref="widgetContent" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="commonAttrs"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- Bar: layer-shell window for Wayland panels/overlays -->
+  <xs:element name="Bar">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:group ref="widgetContent" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <!-- Layer-shell layer -->
+      <xs:attribute name="layer" use="optional">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="background"/>
+            <xs:enumeration value="bottom"/>
+            <xs:enumeration value="top"/>
+            <xs:enumeration value="overlay"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <!-- Edge anchoring -->
+      <xs:attribute name="anchored-top"    type="xs:boolean" use="optional"/>
+      <xs:attribute name="anchored-bottom" type="xs:boolean" use="optional"/>
+      <xs:attribute name="anchored-left"   type="xs:boolean" use="optional"/>
+      <xs:attribute name="anchored-right"  type="xs:boolean" use="optional"/>
+      <!-- Auto exclusive zone -->
+      <xs:attribute name="exclusive-zone"  type="xs:boolean" use="optional"/>
+      <!-- Layer-shell edge margins (override the common margin) -->
+      <xs:attribute name="margin-top"    type="xs:integer" use="optional"/>
+      <xs:attribute name="margin-bottom" type="xs:integer" use="optional"/>
+      <xs:attribute name="margin-left"   type="xs:integer" use="optional"/>
+      <xs:attribute name="margin-right"  type="xs:integer" use="optional"/>
+      <xs:attributeGroup ref="commonAttrs"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- ============================================================
+       Library root element (used in .kiln library files)
+       ============================================================ -->
+  <xs:element name="Library">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:group ref="widgetContent" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>
