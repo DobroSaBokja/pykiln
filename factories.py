@@ -232,45 +232,46 @@ class Anchor(Gtk.Widget):
         return (0, 0, -1, -1)
 
     def do_size_allocate(self, width, height, baseline):
-        child = self.get_first_child()
-        if not child:
-            return
         halign, valign = _ANCHOR_MAP[self._anchor]
+        child = self.get_first_child()
+        while child:
+            _, nat_w, _, _ = child.measure(Gtk.Orientation.HORIZONTAL, height)
+            _, nat_h, _, _ = child.measure(Gtk.Orientation.VERTICAL, width)
+            child_w = min(nat_w, width)
+            child_h = min(nat_h, height)
 
-        _, nat_w, _, _ = child.measure(Gtk.Orientation.HORIZONTAL, height)
-        _, nat_h, _, _ = child.measure(Gtk.Orientation.VERTICAL, width)
-        child_w = min(nat_w, width)
-        child_h = min(nat_h, height)
+            if halign == Gtk.Align.START:
+                x = 0
+            elif halign == Gtk.Align.CENTER:
+                x = (width - child_w) // 2
+            elif halign == Gtk.Align.END:
+                x = width - child_w
+            else:
+                x, child_w = 0, width
 
-        if halign == Gtk.Align.START:
-            x = 0
-        elif halign == Gtk.Align.CENTER:
-            x = (width - child_w) // 2
-        elif halign == Gtk.Align.END:
-            x = width - child_w
-        else:
-            x, child_w = 0, width
+            if valign == Gtk.Align.START:
+                y = 0
+            elif valign == Gtk.Align.CENTER:
+                y = (height - child_h) // 2
+            elif valign == Gtk.Align.END:
+                y = height - child_h
+            else:
+                y, child_h = 0, height
 
-        if valign == Gtk.Align.START:
-            y = 0
-        elif valign == Gtk.Align.CENTER:
-            y = (height - child_h) // 2
-        elif valign == Gtk.Align.END:
-            y = height - child_h
-        else:
-            y, child_h = 0, height
-
-        alloc = Gdk.Rectangle()
-        alloc.x = x
-        alloc.y = y
-        alloc.width = child_w
-        alloc.height = child_h
-        child.size_allocate(alloc, baseline)
+            alloc = Gdk.Rectangle()
+            alloc.x = x
+            alloc.y = y
+            alloc.width = child_w
+            alloc.height = child_h
+            child.size_allocate(alloc, baseline)
+            child = child.get_next_sibling()
 
     def do_dispose(self):
         child = self.get_first_child()
-        if child:
+        while child:
+            next_child = child.get_next_sibling()
             child.unparent()
+            child = next_child
         super().do_dispose()
 
     def append(self, child):
