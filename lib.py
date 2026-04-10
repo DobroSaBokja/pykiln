@@ -85,6 +85,6 @@ def convert_value(widget: Gtk.Widget, prop_name, string_value):
         for val in enum_class.__enum_values__.values():
             if val.value_nick == string_value:
                 return val
-        throw_error("no enum value '" + string_value + "' for " + prop_name)
+        throw_error("no enum value \"" + string_value + "\" for " + prop_name)
     else:
         return string_value
