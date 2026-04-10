@@ -141,7 +141,16 @@ class Bar(Gtk.Window):
 class Rectangle(Gtk.Widget):
     __gtype_name__ = "Rectangle"
 
-    @GObject.Property(type=Gdk.RGBA)
+    @GObject.Property(type=int, default=0)
+    def corner_radius(self):
+        return self._corner_radius
+
+    @corner_radius.setter
+    def corner_radius(self, value):
+        self._corner_radius = value
+        self.queue_draw()
+
+    @GObject.Property(type=Gdk.RGBA, default=Gdk.RGBA())
     def color(self):
         return self._color
 
@@ -160,11 +169,16 @@ class Rectangle(Gtk.Widget):
 
     def do_snapshot(self, snapshot: Gtk.Snapshot):
         bounds = Graphene.Rect().init(0, 0, self.get_width(), self.get_height())
+        rounded = Gsk.RoundedRect()
+        rounded.init_from_rect(bounds, self.props.corner_radius)
+        snapshot.push_rounded_clip(rounded)
         snapshot.append_color(self.props.color, bounds)
+        snapshot.pop()
 
     def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+        self._corner_radius = 0
         self._color = Gdk.RGBA()
+        super().__init__(**kwargs)
         self.set_halign(Gtk.Align.START)
         self.set_valign(Gtk.Align.START)
 
