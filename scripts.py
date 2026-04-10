@@ -22,11 +22,11 @@ class Widget:
     
     def set_property(self, key: str, value):
         if key in factories.attribute_handlers and key in factories.attribute_handlers[key]:
-            factories.attribute_handlers[key][key](self._widget, value)
+            factories.attribute_handlers[key][key](self._widget, str(value))
         elif key in factories.attribute_handlers["common"]:
-            factories.attribute_handlers["common"][key](self._widget, value)
+            factories.attribute_handlers["common"][key](self._widget, str(value))
         else:
-            self._widget.set_property(key, lib.convert_value(self._widget, key, value))
+            self._widget.set_property(key, lib.convert_value(self._widget, key, str(value)))
 
     def get_property(self, key: str):
         pspec = self._widget.__class__.find_property(key)
@@ -94,10 +94,10 @@ def bind(event, func, *args, **kwargs):
                 if result == False:
                     return GLib.SOURCE_REMOVE
                 return GLib.SOURCE_CONTINUE
-            if miliseconds in kwargs and kwargs[miliseconds]:
-                source_id = GLib.timeout_add_seconds(time, tick)
-            else:
+            if "miliseconds" in kwargs and kwargs["miliseconds"]:
                 source_id = GLib.timeout_add(time, tick)
+            else:
+                source_id = GLib.timeout_add_seconds(time, tick)
             binded.append(source_id)
             return Event(source_id)
         case "idle":
