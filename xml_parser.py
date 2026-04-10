@@ -7,7 +7,7 @@ def parse(path):
     with open(path, "r") as f:
         text = f.read()
 
-        scripts.scripts[:] = re.findall(r'<Script>(.*?)</Script>', text, re.DOTALL)
+        scripts.main_scripts[:] = re.findall(r'<Script>(.*?)</Script>', text, re.DOTALL)
 
         clean = re.sub(r'<Script>.*?</Script>', '<Script/>', text, flags=re.DOTALL)
 
@@ -27,6 +27,6 @@ def parse_library(path):
     if root.tag != "Library":
         lib.throw_error("imported file must have a <Library> root tag")
 
-    scripts.scripts.extend(library_scripts)
+    scripts.library_scripts.extend(library_scripts)
     
     return root
