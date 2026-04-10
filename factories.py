@@ -190,7 +190,7 @@ class Circle(Gtk.Widget):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.set_halign(Gtk.Align.START)
-        self.set_valign(Gtk.Align.START)
+        self.set_valign(Gtk.Align.CENTER)
 
 class AnchorPosition(GObject.GEnum):
     __gtype_name__ = "AnchorPosition"
