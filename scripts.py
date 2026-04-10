@@ -4,7 +4,7 @@ import textwrap
 
 import xml.etree.ElementTree as ET
 
-from gi.repository import Gtk, GLib
+from gi.repository import Gtk, GLib, GObject
 
 import lib
 import factories
@@ -27,6 +27,26 @@ class Widget:
             factories.attribute_handlers["common"][key](self._widget, value)
         else:
             self._widget.set_property(key, lib.convert_value(self._widget, key, value))
+
+    def get_property(self, key: str):
+        pspec = self._widget.__class__.find_property(key)
+        if pspec is None:
+            throw_error("PYTHON: no property called " + prop_name)
+
+        vtype = pspec.value_type
+        
+        if pspec.value_type.is_a(GObject.GEnum):
+            enum_class = vtype.pytype
+            if enum_class is None:
+                enum_class = getattr(Gtk, vtype.name.removeprefix("Gtk"), None)
+            if enum_class is None:
+                throw_error("PYTHON: cannot resolve enum type for " + key)
+            for val in enum_class.__enum_values__.values():
+                if val == self._widget.get_property(key):
+                    if val.value_nick:
+                        return val.value_nick
+        else:
+            return self._widget.get_property(key)
 
     def connect(self, signal: str, function):
         self._widget.connect(signal, function)
