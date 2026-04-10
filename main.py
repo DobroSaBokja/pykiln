@@ -27,7 +27,7 @@ def on_activate(app):
     global window
 
     window = widget_builder.build(root, context)
-    scripts.run_scripts()
+    scripts.run_scripts(os.path.dirname(kiln_path))
     window.present()
 
 def on_file_changed(monitor, file, other_file, event_type):

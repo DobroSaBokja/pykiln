@@ -299,9 +299,6 @@ _LAYER_MAP = {
 }
 
 class _RoundedContainer(Gtk.Widget):
-    """Internal container used by Bar to clip children to a rounded rect.
-    Background color and styling are handled via CSS on this widget."""
-
     def __init__(self, radius: float):
         super().__init__()
         self._radius = radius
@@ -323,8 +320,6 @@ class _RoundedContainer(Gtk.Widget):
             child.size_allocate(alloc, baseline)
 
     def do_snapshot(self, snapshot):
-        # GTK4 renders the CSS background (with border-radius) before this is
-        # called. We only need to clip children to the same rounded shape.
         w, h = self.get_width(), self.get_height()
         bounds = Graphene.Rect().init(0, 0, w, h)
         rounded = Gsk.RoundedRect()
@@ -367,15 +362,13 @@ def _window_add(parent, child):
         overlay = Gtk.Overlay()
         if isinstance(parent, Bar) and parent._corner_radius > 0:
             container = _RoundedContainer(float(parent._corner_radius))
-            # Transfer user CSS classes from Bar to the container so that
-            # CSS targeting those classes (e.g. background-color) applies here.
+
             for cls in parent.get_css_classes():
                 if cls != parent._bar_css_class:
                     container.add_css_class(cls)
-            # Apply border-radius (and optional background-color shorthand) via CSS.
-            # Using a unique class so multiple Bars don't collide.
             uid = f"_bar-rc-{id(parent)}"
             container.add_css_class(uid)
+            
             css_rules = [f"border-radius: {parent._corner_radius}px;"]
             if parent._background:
                 css_rules.append(f"background-color: {parent._background};")

@@ -87,7 +87,11 @@ def get_blueprint(id: str):
 
     return blueprints[id]
 
-def run_scripts():
+def run_scripts(base_path: str = None):
+    import sys
+    if base_path and base_path not in sys.path:
+        sys.path.insert(0, base_path)
+
     globals: dict = {
         "get": get,
         "bind": bind,
