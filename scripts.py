@@ -31,7 +31,7 @@ class Widget:
     def get_property(self, key: str):
         pspec = self._widget.__class__.find_property(key)
         if pspec is None:
-            throw_error("PYTHON: no property called " + prop_name)
+            lib.throw_error("PYTHON: no property called " + prop_name)
 
         vtype = pspec.value_type
         
@@ -40,7 +40,7 @@ class Widget:
             if enum_class is None:
                 enum_class = getattr(Gtk, vtype.name.removeprefix("Gtk"), None)
             if enum_class is None:
-                throw_error("PYTHON: cannot resolve enum type for " + key)
+                lib.throw_error("PYTHON: cannot resolve enum type for " + key)
             for val in enum_class.__enum_values__.values():
                 if val == self._widget.get_property(key):
                     if val.value_nick:
