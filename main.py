@@ -38,7 +38,8 @@ def on_file_changed(monitor, file, other_file, event_type):
 
     window.destroy()
     scripts.killall()
-    scripts.scripts.clear()
+    scripts.library_scripts.clear()
+    scripts.main_scripts.clear()
     scripts.widget_dictionary.clear()
 
     context = lib.Context(app, os.path.dirname(kiln_path))

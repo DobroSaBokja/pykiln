@@ -71,7 +71,9 @@ class Event:
         GLib.source_remove(self.id)
         binded.remove(self.id)
 
-scripts: list = []
+library_scripts: list = []
+
+main_scripts: list = []
 
 widget_dictionary: dict = {}
 
@@ -145,6 +147,6 @@ def run_scripts(base_path: str = None):
         "shell_async": shell_async
     }
 
-    for script in scripts:
+    for script in library_scripts + main_scripts:
         script = textwrap.dedent(script)
         exec(script, globals)
