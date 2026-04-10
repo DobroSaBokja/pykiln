@@ -70,7 +70,9 @@ def bind(event, func, *args):
         case "repeat":
             time = args[0]
             def tick():
-                func()
+                result = func()
+                if result == False:
+                    return GLib.SOURCE_REMOVE
                 return GLib.SOURCE_CONTINUE
             
             source_id = GLib.timeout_add_seconds(time, tick)
