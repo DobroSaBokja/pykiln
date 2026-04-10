@@ -31,7 +31,7 @@ class Widget:
     def get_property(self, key: str):
         pspec = self._widget.__class__.find_property(key)
         if pspec is None:
-            lib.throw_error("PYTHON: no property called " + prop_name)
+            lib.throw_error("PYTHON: no property called " + key)
 
         vtype = pspec.value_type
         
