@@ -13,6 +13,21 @@ def _apply_css_class(w: Gtk.Widget, v: str):
 class Bar(Gtk.Window):
     __gtype_name__ = "Bar"
 
+    @GObject.Property(type=int, default=0)
+    def corner_radius(self):
+        return self._corner_radius
+    
+    @corner_radius.setter
+    def corner_radius(self, value: int):
+        self._corner_radius = value
+        if value > 0:
+            css = Gtk.CssProvider()
+            css.load_from_string("window { background: transparent; }")
+            Gtk.StyleContext.add_provider_for_display(
+                Gdk.Display.get_default(), css,
+                Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+            )
+
     @GObject.Property(type=bool, default=False)
     def anchored_top(self):
         return self._anchored_top
@@ -290,8 +305,17 @@ def _window_add(parent, child):
         overlay = Gtk.Overlay()
         overlay.set_child(child)
         parent.set_child(overlay)
+        if isinstance(parent, Bar) and parent._corner_radius > 0:
+            r = parent._corner_radius
+            overlay.add_css_class("bar-rounded")
+            css = Gtk.CssProvider()
+            css.load_from_string(f".bar-rounded {{ border-radius: {r}px; }}")
+            overlay.get_style_context().add_provider(
+                css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+            )
     elif isinstance(existing, Gtk.Overlay):
         existing.add_overlay(child)
+
 
 
 def _paned_add(parent, child):
