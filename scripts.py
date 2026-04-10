@@ -31,6 +31,18 @@ class Widget:
     def connect(self, signal: str, function):
         self._widget.connect(signal, function)
 
+    def destroy(self):
+        parent = self._widget.get_parent()
+        if parent:
+            if isinstance(parent, Gtk.Overlay):
+                if parent.get_child() == self._widget:
+                    parent.set_child(None)
+                else:
+                    parent.remove_overlay(self._widget)
+            else:
+                parent.remove(self._widget)
+        del widget_dictionary[self.id]
+
 class Event:
     def __init__(self, id: int):
         self.id = id
