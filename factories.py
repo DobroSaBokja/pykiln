@@ -179,8 +179,8 @@ class Rectangle(Gtk.Widget):
         self._corner_radius = 0
         self._color = Gdk.RGBA()
         super().__init__(**kwargs)
-        self.set_halign(Gtk.Align.START)
-        self.set_valign(Gtk.Align.START)
+        self.set_halign(Gtk.Align.CENTER)
+        self.set_valign(Gtk.Align.CENTER)
 
 class Circle(Gtk.Widget):
     __gtype_name__ = "Circle"
@@ -203,7 +203,7 @@ class Circle(Gtk.Widget):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.set_halign(Gtk.Align.START)
+        self.set_halign(Gtk.Align.CENTER)
         self.set_valign(Gtk.Align.CENTER)
 
 class AnchorPosition(GObject.GEnum):
