@@ -64,6 +64,15 @@ def bind(event, func, *args):
             source_id = GLib.timeout_add_seconds(time, tick)
             binded.append(source_id)
             return Event(source_id)
+        case "idle":
+            import threading
+            wrapped_args = tuple(
+                (lambda f: lambda *a: GLib.idle_add(f, *a))(a) if callable(a) else a
+                for a in args
+            )
+            def run():
+                func(*wrapped_args)
+            threading.Thread(target=run, daemon=True).start()
 
 def killall():
     for source in binded:
