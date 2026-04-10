@@ -92,6 +92,8 @@ def run_scripts():
         "get": get,
         "bind": bind,
         "get_blueprint": get_blueprint,
+        "shell": shell,
+        "shell_async": shell_async
     }
 
     for script in scripts:
