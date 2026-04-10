@@ -85,7 +85,7 @@ def get(id):
 
 binded = []
 
-def bind(event, func, *args):
+def bind(event, func, *args, **kwargs):
     match event:
         case "repeat":
             time = args[0]
@@ -94,8 +94,10 @@ def bind(event, func, *args):
                 if result == False:
                     return GLib.SOURCE_REMOVE
                 return GLib.SOURCE_CONTINUE
-            
-            source_id = GLib.timeout_add_seconds(time, tick)
+            if miliseconds in kwargs and kwargs[miliseconds]:
+                source_id = GLib.timeout_add_seconds(time, tick)
+            else:
+                source_id = GLib.timeout_add(time, tick)
             binded.append(source_id)
             return Event(source_id)
         case "idle":
