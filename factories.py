@@ -315,6 +315,12 @@ _LAYER_MAP = {
     "overlay":    LayerShell.Layer.OVERLAY,
 }
 
+_KEYBOARD_MODE_MAP = {
+    "none":      LayerShell.KeyboardMode.NONE,
+    "exclusive": LayerShell.KeyboardMode.EXCLUSIVE,
+    "on-demand": LayerShell.KeyboardMode.ON_DEMAND,
+}
+
 class _RoundedContainer(Gtk.Widget):
     def __init__(self, radius: float):
         super().__init__()
@@ -363,6 +369,12 @@ def _set_bar_layer(widget, value: str):
         lib.throw_error("unknown layer value '" + value + "'; expected one of: " + ", ".join(_LAYER_MAP))
     LayerShell.set_layer(widget, _LAYER_MAP[value])
 
+def _set_bar_keyboard_mode(widget, value: str):
+    if value not in _KEYBOARD_MODE_MAP:
+        import lib
+        lib.throw_error("unknown keyboard-mode value '" + value + "'; expected one of: " + ", ".join(_KEYBOARD_MODE_MAP))
+    LayerShell.set_keyboard_mode(widget, _KEYBOARD_MODE_MAP[value])
+
 def _set_anchor_align(widget, value: str):
     if value not in _ALIGN_NAME_MAP:
         import lib
@@ -379,6 +391,7 @@ attribute_handlers = {
     },
     "Bar": {
         "layer": _set_bar_layer,
+        "keyboard-mode": _set_bar_keyboard_mode,
     },
     "Anchor": {
         "align": _set_anchor_align,
