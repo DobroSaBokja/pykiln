@@ -45,8 +45,8 @@ Custom ``Rectangle`` and ``Circle`` widgets positioned with ``Anchor``.
 .. literalinclude:: ../examples/primitives.kiln
    :language: xml
 
-- ``Anchor`` expands to fill the window; children are placed at the named
-  anchor point.
+- ``Anchor`` expands to fill the window; ``align`` controls where children
+  are placed within it.
 - ``color`` accepts any CSS color string.
 
 Repeat
@@ -84,11 +84,11 @@ Importer:
 Blueprint
 ---------
 
-A single blueprint instantiated four times with different ``anchor`` and
+A single blueprint instantiated four times with different ``align`` and
 ``color`` values.
 
 .. literalinclude:: ../examples/blueprint.kiln
    :language: xml
 
-- ``{anchor}`` and ``{color}`` are template placeholders replaced by
-  ``blueprint.create(anchor=..., color=...)``.
+- ``{align}`` and ``{color}`` are template placeholders replaced by
+  ``blueprint.create(align=..., color=...)``.

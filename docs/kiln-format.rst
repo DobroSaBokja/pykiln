@@ -20,10 +20,24 @@ Attribute values are strings in XML and are automatically coerced to the
 correct GObject property type (``int``, ``float``, ``bool``, ``Gdk.RGBA``,
 enum). Boolean values accept ``true``, ``1``, or ``yes``.
 
-Three common attributes apply to all widgets:
+Five common attributes apply to all widgets:
 
 ``margin``
    Sets all four margins to the same value (integer pixels).
+
+``align``
+   Sets ``halign`` and/or ``valign`` in one attribute.
+
+   Two-axis values (set both): ``top-left``, ``top-center``, ``top-right``,
+   ``center-left``, ``center``, ``center-right``, ``bottom-left``,
+   ``bottom-center``, ``bottom-right``.
+
+   Single-axis values (set one, leave the other unchanged):
+   ``top``, ``bottom``, ``left``, ``right``, ``center-h``, ``center-v``.
+
+``expand``
+   Requests extra space from the parent layout. Useful inside ``Box`` and
+   similar containers. Values: ``horizontal``, ``vertical``, ``all``.
 
 ``class``
    Adds a CSS class to the widget (usable in ``<Style>`` blocks).

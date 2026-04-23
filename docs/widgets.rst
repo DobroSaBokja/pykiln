@@ -114,18 +114,19 @@ Properties: ``color`` (CSS color string), ``radius`` (float).
 Anchor
 ~~~~~~
 
-A layout widget that positions a single child at one of nine anchor points.
-Expands to fill all available space.
+A layout widget that expands to fill all available space and positions its
+children at one of nine points using the common ``align`` attribute.
 
 .. code-block:: xml
 
-   <Anchor anchor="top-left">
+   <Anchor align="center">
        <Rectangle width-request="50" height-request="50" color="red"/>
    </Anchor>
 
-``anchor`` values: ``top-left``, ``top-center``, ``top-right``,
-``center-left``, ``center``, ``center-right``, ``bottom-left``,
-``bottom-center``, ``bottom-right``.
+Accepts the same two-axis ``align`` values as any other widget:
+``top-left``, ``top-center``, ``top-right``, ``center-left``, ``center``,
+``center-right``, ``bottom-left``, ``bottom-center``, ``bottom-right``.
+Defaults to ``top-left``.
 
 .. literalinclude:: ../examples/primitives.kiln
    :language: xml
