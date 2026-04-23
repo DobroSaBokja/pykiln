@@ -79,6 +79,14 @@ Properties:
    * - ``layer``
      - str
      - Layer-shell layer: ``background``, ``bottom``, ``top``, ``overlay``
+   * - ``corner-radius``
+     - int
+     - Radius in pixels for rounded corners. When non-zero the bar background
+       is made transparent and a rounded container is rendered instead.
+   * - ``background``
+     - str
+     - CSS color string for the bar background (used together with
+       ``corner-radius``).
 
 Rectangle
 ~~~~~~~~~
@@ -89,8 +97,8 @@ A custom drawing widget that renders a filled rectangle.
 
    <Rectangle width-request="100" height-request="100" color="green"/>
 
-Properties: ``color`` (CSS color string), ``width-request`` (int),
-``height-request`` (int).
+Properties: ``color`` (CSS color string), ``corner-radius`` (int — rounds the
+rectangle corners), ``width-request`` (int), ``height-request`` (int).
 
 Circle
 ~~~~~~

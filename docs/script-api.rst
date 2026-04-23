@@ -23,6 +23,11 @@ Widget access
       Sets a GObject property on the underlying widget. Value is coerced
       automatically (same rules as XML attributes).
 
+   .. method:: get_property(key) -> value
+
+      Returns the current value of a GObject property. Enum values are returned
+      as their nick string (e.g. ``"horizontal"``).
+
    .. method:: connect(signal, function)
 
       Connects a GTK signal to a Python callable.
@@ -32,22 +37,38 @@ Widget access
          btn = get("my-button")
          btn.connect("clicked", lambda _: print("clicked"))
 
+   .. method:: destroy()
+
+      Removes the widget from its parent and unregisters it from the widget
+      dictionary. Works correctly inside ``Gtk.Overlay`` (removes overlay
+      children without destroying the base child).
+
 Events
 ------
 
-.. function:: bind(event, func, *args) -> Event
+.. function:: bind(event, func, *args, **kwargs) -> Event
 
-   Registers a recurring callback. Currently supports one event type:
+   Registers a recurring or background callback. Supported event types:
 
    ``"repeat"``
       Calls ``func()`` on a ``GLib`` timer. The third argument is the interval
-      in seconds (``float``). Returns an :class:`Event` that can be used to
-      cancel the timer.
+      in seconds (``int``). Pass ``miliseconds=True`` to treat the interval as
+      milliseconds instead. Returns an :class:`Event` that can be used to
+      cancel the timer. If ``func()`` returns ``False`` the timer is removed
+      automatically.
 
       .. code-block:: python
 
-         e = bind("repeat", my_func, 0.5)  # every 500 ms
+         e = bind("repeat", my_func, 1)       # every second
+         e = bind("repeat", my_func, 500, miliseconds=True)  # every 500 ms
          e.kill()  # cancel
+
+   ``"idle"``
+      Runs ``func(*args)`` in a background daemon thread via
+      ``threading.Thread``. Any callable arguments in ``*args`` are
+      automatically wrapped so that calling them dispatches back to the GTK
+      main thread via ``GLib.idle_add``. Useful for blocking I/O that should
+      not freeze the UI.
 
 .. class:: Event
 
