@@ -10,6 +10,41 @@ def _set_all_margins(widget, margin):
 def _apply_css_class(w: Gtk.Widget, v: str):
     w.add_css_class(v)
 
+_ALIGN_NAME_MAP = {
+    "top-left":      (Gtk.Align.START,  Gtk.Align.START),
+    "top-center":    (Gtk.Align.CENTER, Gtk.Align.START),
+    "top-right":     (Gtk.Align.END,    Gtk.Align.START),
+    "center-left":   (Gtk.Align.START,  Gtk.Align.CENTER),
+    "center":        (Gtk.Align.CENTER, Gtk.Align.CENTER),
+    "center-right":  (Gtk.Align.END,    Gtk.Align.CENTER),
+    "bottom-left":   (Gtk.Align.START,  Gtk.Align.END),
+    "bottom-center": (Gtk.Align.CENTER, Gtk.Align.END),
+    "bottom-right":  (Gtk.Align.END,    Gtk.Align.END),
+    "top":           (None,             Gtk.Align.START),
+    "bottom":        (None,             Gtk.Align.END),
+    "left":          (Gtk.Align.START,  None),
+    "right":         (Gtk.Align.END,    None),
+    "center-h":      (Gtk.Align.CENTER, None),
+    "center-v":      (None,             Gtk.Align.CENTER),
+}
+
+def _set_align(widget, value: str):
+    if value not in _ALIGN_NAME_MAP:
+        import lib
+        lib.throw_error("unknown align value '" + value + "'")
+    halign, valign = _ALIGN_NAME_MAP[value]
+    if halign is not None:
+        widget.set_halign(halign)
+    if valign is not None:
+        widget.set_valign(valign)
+
+def _set_expand(widget, value: str):
+    if value not in ("horizontal", "vertical", "all"):
+        import lib
+        lib.throw_error("unknown expand value '" + value + "'")
+    widget.set_hexpand(value in ("horizontal", "all"))
+    widget.set_vexpand(value in ("vertical", "all"))
+
 class Bar(Gtk.Window):
     __gtype_name__ = "Bar"
 
@@ -206,47 +241,14 @@ class Circle(Gtk.Widget):
         self.set_halign(Gtk.Align.CENTER)
         self.set_valign(Gtk.Align.CENTER)
 
-class AnchorPosition(GObject.GEnum):
-    __gtype_name__ = "AnchorPosition"
-    TOP_LEFT     = 0
-    TOP_CENTER   = 1
-    TOP_RIGHT    = 2
-    CENTER_LEFT  = 3
-    CENTER       = 4
-    CENTER_RIGHT = 5
-    BOTTOM_LEFT  = 6
-    BOTTOM_CENTER = 7
-    BOTTOM_RIGHT = 8
-
-_ANCHOR_MAP = {
-    AnchorPosition.TOP_LEFT:      (Gtk.Align.START, Gtk.Align.START),
-    AnchorPosition.TOP_CENTER:    (Gtk.Align.CENTER, Gtk.Align.START),
-    AnchorPosition.TOP_RIGHT:     (Gtk.Align.END,   Gtk.Align.START),
-    AnchorPosition.CENTER_LEFT:   (Gtk.Align.START, Gtk.Align.CENTER),
-    AnchorPosition.CENTER:        (Gtk.Align.CENTER, Gtk.Align.CENTER),
-    AnchorPosition.CENTER_RIGHT:  (Gtk.Align.END,   Gtk.Align.CENTER),
-    AnchorPosition.BOTTOM_LEFT:   (Gtk.Align.START, Gtk.Align.END),
-    AnchorPosition.BOTTOM_CENTER: (Gtk.Align.CENTER, Gtk.Align.END),
-    AnchorPosition.BOTTOM_RIGHT:  (Gtk.Align.END,   Gtk.Align.END),
-}
-
 class Anchor(Gtk.Widget):
     __gtype_name__ = "Anchor"
-
-    @GObject.Property(type=AnchorPosition, default=AnchorPosition.TOP_LEFT)
-    def anchor(self):
-        return self._anchor
-
-    @anchor.setter
-    def anchor(self, value):
-        self._anchor = value
-        self.queue_allocate()
 
     def do_measure(self, orientation, for_size):
         return (0, 0, -1, -1)
 
     def do_size_allocate(self, width, height, baseline):
-        halign, valign = _ANCHOR_MAP[self._anchor]
+        halign, valign = self._child_align
         child = self.get_first_child()
         while child:
             _, nat_w, _, _ = child.measure(Gtk.Orientation.HORIZONTAL, height)
@@ -293,7 +295,7 @@ class Anchor(Gtk.Widget):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._anchor = AnchorPosition.TOP_LEFT
+        self._child_align = (Gtk.Align.START, Gtk.Align.START)
         self.set_hexpand(True)
         self.set_vexpand(True)
 
@@ -361,13 +363,25 @@ def _set_bar_layer(widget, value: str):
         lib.throw_error("unknown layer value '" + value + "'; expected one of: " + ", ".join(_LAYER_MAP))
     LayerShell.set_layer(widget, _LAYER_MAP[value])
 
+def _set_anchor_align(widget, value: str):
+    if value not in _ALIGN_NAME_MAP:
+        import lib
+        lib.throw_error("unknown align value '" + value + "'")
+    widget._child_align = _ALIGN_NAME_MAP[value]
+    widget.queue_allocate()
+
 attribute_handlers = {
     "common": {
         "margin": _set_all_margins,
         "class": _apply_css_class,
+        "align": _set_align,
+        "expand": _set_expand,
     },
     "Bar": {
         "layer": _set_bar_layer,
+    },
+    "Anchor": {
+        "align": _set_anchor_align,
     },
 }
 
