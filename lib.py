@@ -42,10 +42,7 @@ class Blueprint:
 
         def replace_templates(el: ET.Element):
             for attrib in el.attrib:
-                if m := re.search(r'\{([^}]+)\}', el.attrib[attrib]):
-                    key = m.group(1)
-                    if key in kwargs:
-                        el.attrib[attrib] = kwargs[key]
+                el.attrib[attrib] = re.sub(r'\{([^}]+)\}', lambda m: str(kwargs[m.group(1)]) if m.group(1) in kwargs else m.group(0), el.attrib[attrib])
             for child in el:
                 replace_templates(child)
 
