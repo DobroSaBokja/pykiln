@@ -2,10 +2,10 @@ from gi.repository import Gtk, GObject, Gdk, Graphene, Gsk
 from gi.repository import Gtk4LayerShell as LayerShell
 
 def _set_all_margins(widget, margin):
-    widget.set_margin_start(margin)
-    widget.set_margin_end(margin)
-    widget.set_margin_top(margin)
-    widget.set_margin_bottom(margin)
+    widget.set_margin_start(float(margin))
+    widget.set_margin_end(float(margin))
+    widget.set_margin_top(float(margin))
+    widget.set_margin_bottom(float(margin))
 
 def _apply_css_class(w: Gtk.Widget, v: str):
     w.add_css_class(v)
