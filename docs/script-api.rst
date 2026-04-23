@@ -40,8 +40,7 @@ Widget access
    .. method:: destroy()
 
       Removes the widget from its parent and unregisters it from the widget
-      dictionary. Works correctly inside ``Gtk.Overlay`` (removes overlay
-      children without destroying the base child).
+      dictionary.
 
 Events
 ------
