@@ -21,7 +21,7 @@ class Widget:
             widget_dictionary[id] = self
     
     def set_property(self, key: str, value):
-        widget_type = type(self._widget).__gtype_name__
+        widget_type = getattr(type(self._widget), '__gtype_name__', None)
         if widget_type in factories.attribute_handlers and key in factories.attribute_handlers[widget_type]:
             factories.attribute_handlers[widget_type][key](self._widget, str(value))
         elif key in factories.attribute_handlers["common"]:
