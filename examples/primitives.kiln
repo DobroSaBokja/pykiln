@@ -4,10 +4,10 @@
             background-color: black;
         }
     </Style>
-    <Anchor anchor="top-left">
+    <Anchor align="top-left">
         <Rectangle width-request="100" height-request="100" color="green"></Rectangle>
     </Anchor>
-    <Anchor anchor="top-right">
+    <Anchor align="top-right">
         <Circle radius="50" color="yellow"></Circle>
     </Anchor>
 </Window>
